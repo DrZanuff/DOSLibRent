@@ -10,5 +10,6 @@ public record BookCSVLine(
         boolean available,
         LocalDate registerDate,
         LocalDate lastUpdate,
-        UUID authorId) {
+        UUID authorId,
+        String genre) {
 }

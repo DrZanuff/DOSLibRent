@@ -11,15 +11,30 @@ public class Book {
     private final LocalDate registerDate;
     private LocalDate lastUpdate;
     private Author author;
+    private final String genre;
 
-    public Book(String title, UUID id, String sku, boolean available, LocalDate registerDate, LocalDate lastUpdate, Author author) {
+    public Book(
+            String title,
+            UUID id,
+            String sku,
+            boolean available,
+            LocalDate registerDate,
+            LocalDate lastUpdate,
+            Author author,
+            String genre
+    ) {
         this.title = title;
         this.id = id == null ? UUID.randomUUID() : id;
         this.sku = sku;
         this.available = available;
-        this.registerDate = registerDate == null ? LocalDate.now(): registerDate;
+        this.registerDate = registerDate == null ? LocalDate.now() : registerDate;
         this.lastUpdate = lastUpdate == null ? LocalDate.now() : lastUpdate;
         this.author = author;
+        this.genre = genre;
+    }
+    
+    public static Author noAuthor() {
+        return new Author(null,null,null);
     }
 
     public UUID getID() {
@@ -66,5 +81,9 @@ public class Book {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
     }
 }

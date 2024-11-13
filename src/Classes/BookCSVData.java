@@ -13,7 +13,7 @@ import java.util.UUID;
 public class BookCSVData {
     private static final Path originFile = Paths.get("books.csv");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private static final String header = "id,title,sku,isAvailable,registerDate,lastUpdate,authorId";
+    private static final String header = "id,title,sku,isAvailable,registerDate,lastUpdate,authorId,genre";
 
     public ArrayList<BookCSVLine> readBooksCSV() {
         ArrayList<BookCSVLine> books = new ArrayList<>();
@@ -32,7 +32,7 @@ public class BookCSVData {
 
                 String[] columns = line.split(",");
 
-                if (columns.length != 7) {
+                if (columns.length != 8) {
                     System.out.println("Invalid Line (incorrect column numbers): " + line);
                     continue;
                 }
@@ -45,10 +45,10 @@ public class BookCSVData {
                     LocalDate registerDate = LocalDate.parse(columns[4].trim(), dateFormatter);
                     LocalDate lastUpdate = LocalDate.parse(columns[5].trim(), dateFormatter);
                     UUID authorId = UUID.fromString(columns[6]);
+                    String genre = columns[7];
 
-                    LocalDate birth = LocalDate.parse(columns[2].trim(), dateFormatter);
 
-                    books.add(new BookCSVLine(id, title, sku, isAvailable, registerDate, lastUpdate, authorId));
+                    books.add(new BookCSVLine(id, title, sku, isAvailable, registerDate, lastUpdate, authorId, genre));
                 } catch (Exception e) {
                     System.out.println("Error processing line " + line + "Error: " + e.getMessage());
                 }
@@ -66,7 +66,9 @@ public class BookCSVData {
         lines.add(header);
 
         for (Book book : books) {
-            String line = book.getID() + "," + book.getTitle() + "," + book.getSku() + "," + book.isAvailable() + "," + book.getRegisterDate() + "," + book.getLastUpdate() + "," + book.getAuthor() + "\n";
+            String line =
+                    book.getID() + "," + book.getTitle() + "," + book.getSku() + "," + book.isAvailable() + "," +
+                            book.getRegisterDate() + "," + book.getLastUpdate() + "," + book.getAuthor() +  "," + book.getGenre() + "\n";
             lines.add(line);
         }
 

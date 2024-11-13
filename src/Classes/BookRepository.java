@@ -22,7 +22,8 @@ public class BookRepository {
                 bookData.available(),
                 bookData.lastUpdate(),
                 bookData.registerDate(),
-                authorData
+                authorData,
+                bookData.genre()
         );
     }
 
@@ -61,7 +62,7 @@ public class BookRepository {
         bookDataList.forEach(bookData -> {
             Optional<Book> bookById = findById(bookData.id());
 
-            if (bookById.isPresent()){
+            if (bookById.isPresent()) {
                 bookList.add(bookById.get());
             }
         });
@@ -69,6 +70,21 @@ public class BookRepository {
         return bookList;
     }
 
-    // filterByTitle
-    // Adicionar genre
+    public ArrayList<Book> findBooksByTitle(String title) {
+        ArrayList<BookCSVLine> bookMatches = bookRegistries
+                .stream()
+                .filter(bookData -> bookData.title().contains(title))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return bookMatches.stream().map(book -> {
+            Optional<Author> bookAuthor =
+                    authors.stream().filter(author -> author.getId().equals(book.id())).findFirst();
+
+            return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
+
+        }).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    // filterBooksByGenre
+    // filterBooksByMostRecent
 }
