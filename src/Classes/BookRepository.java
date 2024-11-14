@@ -1,5 +1,6 @@
 package Classes;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +26,10 @@ public class BookRepository {
                 authorData,
                 bookData.genre()
         );
+    }
+
+    private Optional<Author> getBookAuthor(BookCSVLine book) {
+        return authors.stream().filter(author -> author.getId().equals(book.authorId())).findFirst();
     }
 
     public Optional<Book> findById(UUID id) {
@@ -53,7 +58,7 @@ public class BookRepository {
 
         for (Author author : authorList) {
             ArrayList<BookCSVLine> bookRegister = bookRegistries.stream()
-                    .filter(book -> book.id().equals(author.getId()))
+                    .filter(book -> book.authorId().equals(author.getId()))
                     .collect(Collectors.toCollection(ArrayList::new));
 
             bookDataList.addAll(bookRegister);
@@ -70,21 +75,45 @@ public class BookRepository {
         return bookList;
     }
 
-    public ArrayList<Book> findBooksByTitle(String title) {
+    public ArrayList<Book> filterBooksByTitle(String title) {
         ArrayList<BookCSVLine> bookMatches = bookRegistries
                 .stream()
                 .filter(bookData -> bookData.title().contains(title))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return bookMatches.stream().map(book -> {
-            Optional<Author> bookAuthor =
-                    authors.stream().filter(author -> author.getId().equals(book.id())).findFirst();
+            Optional<Author> bookAuthor = getBookAuthor(book);
 
             return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
 
         }).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // filterBooksByGenre
-    // filterBooksByMostRecent
+    public ArrayList<Book> filterBooksByGenre(String genre) {
+        ArrayList<BookCSVLine> bookMatches = bookRegistries
+                .stream()
+                .filter(bookData -> bookData.genre().contains(genre))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return bookMatches.stream().map(book -> {
+            Optional<Author> bookAuthor = getBookAuthor(book);
+
+            return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
+        }).collect(Collectors.toCollection((ArrayList::new)));
+    }
+
+    public ArrayList<Book> filterBooksByMostRecent(int days) {
+        LocalDate dateThreshold = LocalDate.now().minusDays(days);
+
+        ArrayList<BookCSVLine> bookMatches = bookRegistries
+                .stream()
+                .filter(bookData -> bookData.registerDate().isAfter(dateThreshold))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return bookMatches.stream().map(book->{
+            Optional<Author> bookAuthor = getBookAuthor(book);
+
+            return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
+        }).collect(Collectors.toCollection(ArrayList::new));
+    }
 }
