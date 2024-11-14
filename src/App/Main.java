@@ -12,6 +12,6 @@ public class Main {
 
         BookCSVData bookCSVData = new BookCSVData();
         ArrayList<BookCSVLine> books = bookCSVData.readBooksCSV();
-        BookRepository bookRepository = new BookRepository(books,authors);
+        BookRepository bookRepository = new BookRepository(books,authorsRepository);
     }
 }

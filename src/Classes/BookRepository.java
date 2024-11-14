@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 public class BookRepository {
     private final ArrayList<BookCSVLine> bookRegistries;
-    private final ArrayList<Author> authors;
+    private final AuthorRepository authorRepository;
 
-    public BookRepository(ArrayList<BookCSVLine> bookRegistries, ArrayList<Author> authors) {
+    public BookRepository(ArrayList<BookCSVLine> bookRegistries, AuthorRepository authorRepository) {
         this.bookRegistries = bookRegistries;
-        this.authors = authors;
+        this.authorRepository = authorRepository;
     }
 
     private Book getBookData(BookCSVLine bookData, Author authorData) {
@@ -29,7 +29,7 @@ public class BookRepository {
     }
 
     private Optional<Author> getBookAuthor(BookCSVLine book) {
-        return authors.stream().filter(author -> author.getId().equals(book.authorId())).findFirst();
+        return authorRepository.findByID(book.authorId());
     }
 
     public Optional<Book> findById(UUID id) {
@@ -41,7 +41,7 @@ public class BookRepository {
             return Optional.empty();
         }
 
-        bookAuthor = authors.stream().filter(author -> author.getId().equals(bookRegister.get().id())).findFirst();
+        bookAuthor = getBookAuthor(bookRegister.get());
         if (bookAuthor.isEmpty()) {
             return Optional.empty();
         }
