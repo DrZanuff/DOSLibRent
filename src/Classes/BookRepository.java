@@ -116,4 +116,18 @@ public class BookRepository {
             return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
         }).collect(Collectors.toCollection(ArrayList::new));
     }
+
+    public ArrayList<Book> filterByAvailability() {
+        ArrayList<BookCSVLine> bookMatches = bookRegistries
+                .stream()
+                .filter(BookCSVLine::available)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return bookMatches.stream().map(book -> {
+            Optional<Author> bookAuthor = getBookAuthor(book);
+
+            return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
+        }).collect(Collectors.toCollection(ArrayList::new));
+    }
+    // registerNewBook
 }
