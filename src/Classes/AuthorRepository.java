@@ -1,5 +1,6 @@
 package Classes;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,5 +26,22 @@ public class AuthorRepository {
     public ArrayList<Author> findManyByName(String authorName) {
         return authors.stream().filter(author -> author.getName().contains(authorName))
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
+    public boolean registerNewAuthor(String name, LocalDate birth) {
+        if (name == null || name.isEmpty() || birth == null) {
+            throw new IllegalArgumentException("Invalid author details provided");
+        }
+
+        Author newAuthor = new Author(name, birth, UUID.randomUUID());
+
+        boolean added = authors.add(newAuthor);
+
+        if (!added) {
+            throw new IllegalStateException("Failed to add author to the registry");
+        }
+
+        return true;
     }
 }

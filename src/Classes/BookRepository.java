@@ -110,7 +110,7 @@ public class BookRepository {
                 .filter(bookData -> bookData.registerDate().isAfter(dateThreshold))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        return bookMatches.stream().map(book->{
+        return bookMatches.stream().map(book -> {
             Optional<Author> bookAuthor = getBookAuthor(book);
 
             return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
@@ -129,5 +129,42 @@ public class BookRepository {
             return getBookData(book, bookAuthor.orElseGet(Book::noAuthor));
         }).collect(Collectors.toCollection(ArrayList::new));
     }
-    // registerNewBook
+
+    public enum RegistrationStatus {
+        SUCCESS,
+        AUTHOR_NOT_FOUND
+    }
+
+    public RegistrationStatus registerNewBook(String title, String sku, UUID authorID, String genre) {
+        Optional<Author> author = authorRepository.findByID(authorID);
+
+        if (title == null || title.isBlank() || sku == null || sku.isBlank() || genre == null || genre.isBlank()) {
+            throw new IllegalArgumentException("Invalid book details provided");
+        }
+
+        if (author.isEmpty()) {
+            return RegistrationStatus.AUTHOR_NOT_FOUND;
+        }
+
+        LocalDate registerDate = LocalDate.now();
+        BookCSVLine bookData = new BookCSVLine(
+                UUID.randomUUID(),
+                title,
+                sku,
+                true,
+                registerDate,
+                registerDate,
+                authorID,
+                genre);
+
+        boolean added = bookRegistries.add(bookData);
+        if (!added) {
+            throw new IllegalStateException("Failed to add book to the registry");
+        }
+
+        return RegistrationStatus.SUCCESS;
+    }
+
+    // Create Loan Repository and LoanCSVData
+    // Main.Java will be BookLibrary class with repositories as dep
 }
