@@ -13,7 +13,7 @@ import java.util.UUID;
 public class BookCSVData {
     private static final Path originFile = Paths.get("books.csv");
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private static final String header = "id,title,sku,isAvailable,registerDate,lastUpdate,authorId,genre";
+    private static final String header = "id,title,sku,isAvailable,loanDate,lastUpdate,authorId,genre";
 
     public ArrayList<BookCSVLine> readBooksCSV() {
         ArrayList<BookCSVLine> books = new ArrayList<>();
@@ -68,7 +68,7 @@ public class BookCSVData {
         for (Book book : books) {
             String line =
                     book.getID() + "," + book.getTitle() + "," + book.getSku() + "," + book.isAvailable() + "," +
-                            book.getRegisterDate() + "," + book.getLastUpdate() + "," + book.getAuthor() +  "," + book.getGenre() + "\n";
+                            book.getRegisterDate() + "," + book.getLastUpdate() + "," + book.getAuthor().getId() +  "," + book.getGenre() + "\n";
             lines.add(line);
         }
 
